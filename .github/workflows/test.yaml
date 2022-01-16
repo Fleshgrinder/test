@@ -12,6 +12,4 @@ jobs:
       deployments: write
     steps:
     - uses: actions/checkout@v2
-    - name: test
-      run: .github/workflows/test.py
-      shell: python
+    - run: exec python3 .github/workflows/test.py
