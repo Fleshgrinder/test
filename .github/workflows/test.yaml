@@ -11,13 +11,4 @@ jobs:
       contents: read
       deployments: write
     steps:
-    - run: |
-        echo '::notice file=main.py,line=3,endLine=3,col=9,endColumn=11,title=My Notice Title::My Notice Message'
-        echo '::group::My Group'
-        echo '::warning::My Warning Message'
-        echo '::error file=main.py,line=3,endLine=3,col=9,endColumn=11,title=My Error Title::My Error Message'
-        echo '::endgroup::'
-        wget https://github.com/cli/cli/releases/download/v2.4.0/gh_2.4.0_linux_amd64.tar.gz
-        tar -xzf gh_2.4.0_linux_amd64.tar.gz
-        ls -la
-        pwd
+    - run: .github/workflows/test.py
