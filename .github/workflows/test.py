@@ -100,7 +100,7 @@ def install_gh(version: str = '2.4.0') -> None:
 
 def main() -> None:
     group('Install GitHub CLI', install_gh)
-    sh('env | sort')
+    sh('env | sort', 'cat $GITHUB_EVENT_PATH')
 
 
 if __name__ == '__main__':
