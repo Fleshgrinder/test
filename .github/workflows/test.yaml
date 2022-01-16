@@ -11,6 +11,7 @@ jobs:
       contents: read
       deployments: write
     steps:
+    - uses: actions/checkout@v2
     - name: test
       run: .github/workflows/test.py
       shell: python
