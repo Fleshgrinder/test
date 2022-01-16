@@ -12,4 +12,4 @@ jobs:
       deployments: write
     steps:
     - uses: actions/checkout@v2
-    - run: exec python3 .github/workflows/test.py
+    - run: exec python3 -u .github/workflows/test.py
