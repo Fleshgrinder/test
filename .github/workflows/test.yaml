@@ -11,4 +11,6 @@ jobs:
       contents: read
       deployments: write
     steps:
-    - run: .github/workflows/test.py
+    - name: test
+      run: .github/workflows/test.py
+      shell: python
