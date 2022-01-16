@@ -2,7 +2,6 @@
 import os
 from enum import Enum, auto, unique
 from typing import Optional, final, Callable
-from os import system as sh
 
 
 @final
@@ -15,6 +14,10 @@ class Level(Enum):
 
     def __str__(self) -> str:
         return self.name.lower()
+
+
+def sh(*commands: str) -> None:
+    os.system(' && '.join(commands))
 
 
 def group(title: str, action: Callable[[], None]) -> None:
@@ -86,14 +89,17 @@ def error(
 
 
 def install_gh(version: str = '2.4.0') -> None:
-    sh(f'wget https://github.com/cli/cli/releases/download/v{version}/gh_{version}_linux_amd64.tar.gz')
-    sh(f'tar -xzf gh_{version}_linux_amd64.tar.gz')
-    sh(f'mv gh_{version}_linux_amd64 /usr/local/bin/gh')
-    os.remove(f'gh_{version}_linux_amd64.tar.gz')
+    sh(
+        f'wget https://github.com/cli/cli/releases/download/v{version}/gh_{version}_linux_amd64.tar.gz',
+        f'tar -xzf gh_{version}_linux_amd64.tar.gz',
+        f'mv gh_{version}_linux_amd64 /usr/local/bin/gh',
+        f'chmod 0755 /usr/local/bin/gh',
+        f'rm -f gh_{version}_linux_amd64.tar.gz',
+    )
 
 
 def main() -> None:
-    group('install gh', install_gh)
+    group('Install GitHub CLI', install_gh)
 
 
 if __name__ == '__main__':
