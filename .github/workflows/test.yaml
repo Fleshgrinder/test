@@ -14,4 +14,4 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
     - name: Test
-      run: exec python3 -u .github/workflows/test.py
+      run: ./.github/workflows/test

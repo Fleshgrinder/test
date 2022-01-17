@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+# region list binaries
+echo '::group::List Runner Binaries'
+echo '::info::List of all available binaries in this runner:'
+ls -l /bin /usr/bin /usr/local/bin
+echo '::endgroup::'
+# endregion
+# region list env
+echo '::group::List System Environment'
+echo '::info::List of all available environment variables in this run:'
+env | sort
+echo '::endgroup::'
+# endregion
+# region list event
+echo '::group::List GitHub Event'
+echo '::info::Lists the entire payload of the received GitHub event that triggered the run:'
+cat "$GITHUB_EVENT_PATH"
+echo '::endgroup::'
+# endregion
+# region validate env
+readonly GITHUB_EVENT_PATH=${GITHUB_EVENT_PATH:?missing required <GITHUB_EVENT_PATH> env var}
+readonly GITHUB_REPOSITORY=${GITHUB_REPOSITORY?:missing required <GITHUB_REPOSITORY> env var}
+readonly GITHUB_RUN_ID=${GITHUB_RUN_ID?:missing required <GITHUB_RUN_ID> env var}
+# endregion
+# region install gh
+echo '::group::Install GitHub CLI'
+(
+    readonly version='2.4.0'
+    wget "https://github.com/cli/cli/releases/download/v${version}/gh_${version}_linux_amd64.tar.gz"
+    tar -xzf "gh_${version}_linux_amd64.tar.gz"
+    mv "gh_${version}_linux_amd64" '/usr/local/bin/gh'
+    chmod 0755 '/usr/local/bin/gh'
+    rm -f "gh_${version}_linux_amd64.tar.gz"
+)
+echo '::endgroup::'
+# endregion
+
+#echo '::group::Update Check Suite'
+#gh api "/repos/$GITHUB_REPOSITORY/check-runs/$GITHUB_RUN_ID"
+#echo '::endgroup::'
