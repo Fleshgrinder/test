@@ -14,19 +14,22 @@ group.end() { printf '::endgroup::\n'; }
 # region list binaries
 group.start 'List Runner Binaries'
 log.notice 'List of all available binaries in this runner:'
+echo
 ls /bin /usr/bin /usr/local/bin
 group.end
 # endregion
 # region list env
 group.start 'List System Environment'
 log.notice 'List of all available environment variables in this run:'
+echo
 env | sort
 group.end
 # endregion
 # region list event
 group.start 'List GitHub Event'
 log.notice 'Lists the entire payload of the received GitHub event that triggered the run:'
-cat "$GITHUB_EVENT_PATH"
+echo
+jq . "$GITHUB_EVENT_PATH"
 group.end
 # endregion
 # region validate env
@@ -44,13 +47,6 @@ group.start 'Install GitHub CLI'
     chmod 0755 '/usr/local/bin/gh'
     rm -f "gh_${version}_linux_amd64.tar.gz"
 )
-group.end
-# endregion
-# region test url
-group.start '\e]8;;https://example.com\e\\example.com\e]8;;\e\\\n'
-log.notice '\e]8;;https://example.com\e\\example.com\e]8;;\e\\\n'
-log.warning '\e]8;;https://example.com\e\\example.com\e]8;;\e\\\n'
-log.error '\e]8;;https://example.com\e\\example.com\e]8;;\e\\\n'
 group.end
 # endregion
 #echo '::group::Update Check Suite'
