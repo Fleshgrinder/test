@@ -1,23 +1,33 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
+# region utils
+log() { printf '::%s::%s\n' "$1" "$2"; }
+log.debug() { log debug "$@"; }
+log.notice() { log notice "$@"; }
+log.warning() { log warning "$@"; }
+log.error() { log error "$@"; }
+
+group.start() { printf '::group::%s\n' "$1"; }
+group.end() { printf '::endgroup::\n'; }
+# endregion
 # region list binaries
-echo '::group::List Runner Binaries'
-echo '::info::List of all available binaries in this runner:'
+group.start 'List Runner Binaries'
+log.notice 'List of all available binaries in this runner:'
 ls -l /bin /usr/bin /usr/local/bin
-echo '::endgroup::'
+group.end
 # endregion
 # region list env
-echo '::group::List System Environment'
-echo '::info::List of all available environment variables in this run:'
+group.start 'List System Environment'
+log.notice 'List of all available environment variables in this run:'
 env | sort
-echo '::endgroup::'
+group.end
 # endregion
 # region list event
-echo '::group::List GitHub Event'
-echo '::info::Lists the entire payload of the received GitHub event that triggered the run:'
+group.start 'List GitHub Event'
+log.notice 'Lists the entire payload of the received GitHub event that triggered the run:'
 cat "$GITHUB_EVENT_PATH"
-echo '::endgroup::'
+group.end
 # endregion
 # region validate env
 readonly GITHUB_EVENT_PATH=${GITHUB_EVENT_PATH:?missing required <GITHUB_EVENT_PATH> env var}
@@ -25,7 +35,7 @@ readonly GITHUB_REPOSITORY=${GITHUB_REPOSITORY?:missing required <GITHUB_REPOSIT
 readonly GITHUB_RUN_ID=${GITHUB_RUN_ID?:missing required <GITHUB_RUN_ID> env var}
 # endregion
 # region install gh
-echo '::group::Install GitHub CLI'
+group.start 'Install GitHub CLI'
 (
     readonly version='2.4.0'
     wget "https://github.com/cli/cli/releases/download/v${version}/gh_${version}_linux_amd64.tar.gz"
@@ -34,7 +44,7 @@ echo '::group::Install GitHub CLI'
     chmod 0755 '/usr/local/bin/gh'
     rm -f "gh_${version}_linux_amd64.tar.gz"
 )
-echo '::endgroup::'
+group.end
 # endregion
 
 #echo '::group::Update Check Suite'
