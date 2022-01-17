@@ -12,14 +12,17 @@ group.start() { printf '::group::%b\n' "$1"; }
 group.end() { printf '::endgroup::\n'; }
 # endregion
 # region setup env
+
+# Gets the unique identifier of the check suite of this GitHub Actions run.
 GITHUB_CHECK_SUITE_ID=$(gh api "repos/{owner}/{repo}/actions/runs/$GITHUB_RUN_ID" --jq '.check_suite_id')
 export GITHUB_CHECK_SUITE_ID
 echo "GITHUB_CHECK_SUITE_ID=$GITHUB_CHECK_SUITE_ID" >>"$GITHUB_ENV"
 
-gh api "repos/{owner}/{repo}/check-suites/$GITHUB_CHECK_SUITE_ID/check-runs" | jq --color-output
-#GITHUB_CHECK_RUN_ID=$(gh api "repos/{owner}/{repo}/check-suites/$GITHUB_CHECK_SUITE_ID/check-runs")
-#export GITHUB_CHECK_RUN_ID
-#echo "GITHUB_CHECK_RUN_ID=$GITHUB_CHECK_RUN_ID" >>"$GITHUB_ENV"
+# Gets the unique identifier of the check run of this GitHub Actions run.
+GITHUB_CHECK_RUN_ID=$(gh api "repos/{owner}/{repo}/check-suites/$GITHUB_CHECK_SUITE_ID/check-runs" --jq '.check_runs[] | select(.name=="'"$GITHUB_JOB"'") | .id')
+export GITHUB_CHECK_RUN_ID
+echo "GITHUB_CHECK_RUN_ID=$GITHUB_CHECK_RUN_ID" >>"$GITHUB_ENV"
+
 # endregion
 # region list env
 group.start 'List System Environment'
@@ -45,19 +48,19 @@ readonly GITHUB_RUN_ID=${GITHUB_RUN_ID?:missing required <GITHUB_RUN_ID> env var
 # endregion
 # region post summary
 group.start 'Post Summary'
-#gh api "repos/{owner}/{repository}/check-runs/$GITHUB_RUN_ID" --input - --method PATCH <<<'{
-#    "output": {
-#        "title": "Test Summary",
-#        "summary": "The **summary** can contain _GHF_ Markdown, including\n\nline feeds?",
-#        "text": "I guess that **text** is meant to contain the bulk of the check run?\n\nline feeds?"
-#    },
-#    "actions": [
-#        {
-#            "label": "Test Label",
-#            "description": "Test Description.",
-#            "identifier": "TEST"
-#        }
-#    ]
-#}'
+gh api "repos/{owner}/{repository}/check-runs/$GITHUB_CHECK_RUN_ID" --input - --method PATCH <<<'{
+    "output": {
+        "title": "Test Summary",
+        "summary": "The **summary** can contain _GHF_ Markdown, including\n\nline feeds?",
+        "text": "I guess that **text** is meant to contain the bulk of the check run?\n\nline feeds?"
+    },
+    "actions": [
+        {
+            "label": "Test Label",
+            "description": "Test Description.",
+            "identifier": "TEST"
+        }
+    ]
+}'
 group.end
 # endregion post summary
