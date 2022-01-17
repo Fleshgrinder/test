@@ -18,6 +18,13 @@ echo
 env | sort
 group.end
 # endregion
+# region list context
+group.start 'List GitHub Context'
+log.notice 'Lists the entire context of the current GitHub Actions run:'
+echo
+jq --color-output "$GITHUB_CONTEXT"
+group.end
+# endregion
 # region list event
 group.start 'List GitHub Event'
 log.notice 'Lists the entire payload of the received GitHub event that triggered the run:'
@@ -31,19 +38,19 @@ readonly GITHUB_RUN_ID=${GITHUB_RUN_ID?:missing required <GITHUB_RUN_ID> env var
 # endregion
 # region post summary
 group.start 'Post Summary'
-gh api "/repos/$GITHUB_REPOSITORY/check-runs/$GITHUB_RUN_ID" --input - --method PATCH <<<'{
-    "output": {
-        "title": "Test Summary",
-        "summary": "The **summary** can contain _GHF_ Markdown, including\n\nline feeds?",
-        "text": "I guess that **text** is meant to contain the bulk of the check run?\n\nline feeds?"
-    },
-    "actions": [
-        {
-            "label": "Test Label",
-            "description": "Test Description.",
-            "identifier": "TEST"
-        }
-    ]
-}'
+#gh api "repos/{owner}/{repository}/check-runs/$GITHUB_RUN_ID" --input - --method PATCH <<<'{
+#    "output": {
+#        "title": "Test Summary",
+#        "summary": "The **summary** can contain _GHF_ Markdown, including\n\nline feeds?",
+#        "text": "I guess that **text** is meant to contain the bulk of the check run?\n\nline feeds?"
+#    },
+#    "actions": [
+#        {
+#            "label": "Test Label",
+#            "description": "Test Description.",
+#            "identifier": "TEST"
+#        }
+#    ]
+#}'
 group.end
 # endregion post summary
