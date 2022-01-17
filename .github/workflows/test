@@ -11,6 +11,16 @@ log.error() { log error "$@"; }
 group.start() { printf '::group::%b\n' "$1"; }
 group.end() { printf '::endgroup::\n'; }
 # endregion
+# region setup env
+GITHUB_CHECK_SUITE_ID=$(gh api "repos/{owner}/{repo}/actions/runs/$GITHUB_RUN_ID" --jq '.check_suite_id')
+export GITHUB_CHECK_SUITE_ID
+echo "GITHUB_CHECK_SUITE_ID=$GITHUB_CHECK_SUITE_ID" >>"$GITHUB_ENV"
+
+GITHUB_CHECK_RUN_ID=$(gh api "repos/{owner}/{repo}/check-suites/$GITHUB_CHECK_SUITE_ID/check-runs")
+jq --color-output "$GITHUB_CHECK_RUN_ID"
+#export GITHUB_CHECK_RUN_ID
+#echo "GITHUB_CHECK_RUN_ID=$GITHUB_CHECK_RUN_ID" >>"$GITHUB_ENV"
+# endregion
 # region list env
 group.start 'List System Environment'
 log.notice 'List of all available environment variables in this run:'
@@ -32,11 +42,6 @@ group.end
 # region validate env
 readonly GITHUB_EVENT_PATH=${GITHUB_EVENT_PATH:?missing required <GITHUB_EVENT_PATH> env var}
 readonly GITHUB_RUN_ID=${GITHUB_RUN_ID?:missing required <GITHUB_RUN_ID> env var}
-# endregion
-# region get check_suite_id
-group.start 'Get check_suite_id'
-gh api "repos/{owner}/{repo}/actions/runs/$GITHUB_RUN_ID" --jq '.check_suite_id'
-group.end
 # endregion
 # region post summary
 group.start 'Post Summary'
