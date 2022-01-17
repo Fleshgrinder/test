@@ -34,7 +34,6 @@ group.end
 # endregion
 # region validate env
 readonly GITHUB_EVENT_PATH=${GITHUB_EVENT_PATH:?missing required <GITHUB_EVENT_PATH> env var}
-readonly GITHUB_REPOSITORY=${GITHUB_REPOSITORY?:missing required <GITHUB_REPOSITORY> env var}
 readonly GITHUB_RUN_ID=${GITHUB_RUN_ID?:missing required <GITHUB_RUN_ID> env var}
 # endregion
 # region install gh
@@ -49,6 +48,21 @@ group.start 'Install GitHub CLI'
 )
 group.end
 # endregion
-#echo '::group::Update Check Suite'
-#gh api "/repos/$GITHUB_REPOSITORY/check-runs/$GITHUB_RUN_ID"
-#echo '::endgroup::'
+# region post summary
+group.start 'Post Summary'
+gh api "/repos/{owner}/{repository}/check-runs/$GITHUB_RUN_ID" --input - --method PATCH <<<'{
+    "output": {
+        "title": "Test Summary",
+        "summary": "The **summary** can contain _GHF_ Markdown, including\n\nline feeds?",
+        "text": "I guess that **text** is meant to contain the bulk of the check run?\n\nline feeds?"
+    },
+    "actions": [
+        {
+            "label": "Test Label",
+            "description": "Test Description.",
+            "identifier": "TEST"
+        }
+    ]
+}'
+group.end
+# endregion post summary
