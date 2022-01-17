@@ -29,24 +29,12 @@ group.end
 group.start 'List GitHub Event'
 log.notice 'Lists the entire payload of the received GitHub event that triggered the run:'
 echo
-jq . "$GITHUB_EVENT_PATH"
+jq --color-output . "$GITHUB_EVENT_PATH"
 group.end
 # endregion
 # region validate env
 readonly GITHUB_EVENT_PATH=${GITHUB_EVENT_PATH:?missing required <GITHUB_EVENT_PATH> env var}
 readonly GITHUB_RUN_ID=${GITHUB_RUN_ID?:missing required <GITHUB_RUN_ID> env var}
-# endregion
-# region install gh
-group.start 'Install GitHub CLI'
-(
-    readonly version='2.4.0'
-    wget "https://github.com/cli/cli/releases/download/v${version}/gh_${version}_linux_amd64.tar.gz"
-    tar -xzf "gh_${version}_linux_amd64.tar.gz"
-    mv "gh_${version}_linux_amd64" '/usr/local/bin/gh'
-    chmod 0755 '/usr/local/bin/gh'
-    rm -f "gh_${version}_linux_amd64.tar.gz"
-)
-group.end
 # endregion
 # region post summary
 group.start 'Post Summary'
