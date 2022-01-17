@@ -47,20 +47,24 @@ readonly GITHUB_EVENT_PATH=${GITHUB_EVENT_PATH:?missing required <GITHUB_EVENT_P
 readonly GITHUB_RUN_ID=${GITHUB_RUN_ID?:missing required <GITHUB_RUN_ID> env var}
 # endregion
 # region post summary
-group.start 'Post Summary'
-gh api "repos/{owner}/{repository}/check-runs/$GITHUB_CHECK_RUN_ID" --input - --method PATCH <<<'{
+group.start 'Check Run'
+gh api '/repos/{owner}/{repo}/check-runs' --input - <<<'{
+    "name": "Test Results",
+    "head_sha": "'"$GITHUB_HEAD_SHA"'",
+    "status": "completed",
+    "conclusion": "neutral",
     "output": {
-        "title": "Test Summary",
-        "summary": "The **summary** can contain _GHF_ Markdown, including\n\nline feeds?",
-        "text": "I guess that **text** is meant to contain the bulk of the check run?\n\nline feeds?"
+        "title": "Title",
+        "summary": "Summary **bold** __italic__",
+        "text": "Text **bold** __italic__"
     },
     "actions": [
         {
-            "label": "Test Label",
-            "description": "Test Description.",
-            "identifier": "TEST"
+            "label": "Label",
+            "description": "Description",
+            "identifier": "id"
         }
     ]
-}'
+}' | jq --color-output
 group.end
 # endregion post summary
