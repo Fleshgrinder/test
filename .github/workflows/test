@@ -18,13 +18,6 @@ echo
 env | sort
 group.end
 # endregion
-# region list context
-group.start 'List GitHub Context'
-log.notice 'Lists the entire context of the current GitHub Actions run:'
-echo
-jq --color-output "$GITHUB_CONTEXT"
-group.end
-# endregion
 # region list event
 group.start 'List GitHub Event'
 log.notice 'Lists the entire payload of the received GitHub event that triggered the run:'
