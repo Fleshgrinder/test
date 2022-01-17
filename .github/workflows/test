@@ -11,13 +11,6 @@ log.error() { log error "$@"; }
 group.start() { printf '::group::%b\n' "$1"; }
 group.end() { printf '::endgroup::\n'; }
 # endregion
-# region list binaries
-group.start 'List Runner Binaries'
-log.notice 'List of all available binaries in this runner:'
-echo
-ls /bin /usr/bin /usr/local/bin
-group.end
-# endregion
 # region list env
 group.start 'List System Environment'
 log.notice 'List of all available environment variables in this run:'
@@ -38,7 +31,7 @@ readonly GITHUB_RUN_ID=${GITHUB_RUN_ID?:missing required <GITHUB_RUN_ID> env var
 # endregion
 # region post summary
 group.start 'Post Summary'
-gh api "/repos/{owner}/{repository}/check-runs/$GITHUB_RUN_ID" --input - --method PATCH <<<'{
+gh api "/repos/$GITHUB_REPOSITORY/check-runs/$GITHUB_RUN_ID" --input - --method PATCH <<<'{
     "output": {
         "title": "Test Summary",
         "summary": "The **summary** can contain _GHF_ Markdown, including\n\nline feeds?",
