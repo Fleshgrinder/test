@@ -15,7 +15,11 @@ group.end() { printf '::endgroup::\n'; }
 group.start 'List System Environment'
 log.notice 'List of all available environment variables in this run:'
 echo
-env | sort
+while read -r line; do
+    key=${line%%=*}
+    value=${line#*=}
+    printf '\e[35m%s\e[0m=\e[32m%s\e[0m\n' "$key" "$value"
+done < <(env | sort)
 group.end
 # endregion
 # region list event
