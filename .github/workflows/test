@@ -33,6 +33,11 @@ group.end
 readonly GITHUB_EVENT_PATH=${GITHUB_EVENT_PATH:?missing required <GITHUB_EVENT_PATH> env var}
 readonly GITHUB_RUN_ID=${GITHUB_RUN_ID?:missing required <GITHUB_RUN_ID> env var}
 # endregion
+# region get check_run_id
+group.start 'Get check_run_id'
+gh api "repos/{owner}/{repo}/actions/runs/$GITHUB_RUN_ID" | jq --color-output
+group.end
+# endregion
 # region post summary
 group.start 'Post Summary'
 #gh api "repos/{owner}/{repository}/check-runs/$GITHUB_RUN_ID" --input - --method PATCH <<<'{
