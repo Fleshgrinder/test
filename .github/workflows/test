@@ -16,8 +16,8 @@ GITHUB_CHECK_SUITE_ID=$(gh api "repos/{owner}/{repo}/actions/runs/$GITHUB_RUN_ID
 export GITHUB_CHECK_SUITE_ID
 echo "GITHUB_CHECK_SUITE_ID=$GITHUB_CHECK_SUITE_ID" >>"$GITHUB_ENV"
 
-GITHUB_CHECK_RUN_ID=$(gh api "repos/{owner}/{repo}/check-suites/$GITHUB_CHECK_SUITE_ID/check-runs")
-jq --color-output "$GITHUB_CHECK_RUN_ID"
+gh api "repos/{owner}/{repo}/check-suites/$GITHUB_CHECK_SUITE_ID/check-runs" | jq --color-output
+#GITHUB_CHECK_RUN_ID=$(gh api "repos/{owner}/{repo}/check-suites/$GITHUB_CHECK_SUITE_ID/check-runs")
 #export GITHUB_CHECK_RUN_ID
 #echo "GITHUB_CHECK_RUN_ID=$GITHUB_CHECK_RUN_ID" >>"$GITHUB_ENV"
 # endregion
