@@ -28,6 +28,7 @@ echo "GITHUB_CHECK_RUN_ID=$GITHUB_CHECK_RUN_ID" >>"$GITHUB_ENV"
 group.start 'List Tool Chains'
 ls -la "$RUNNER_TOOL_CACHE"
 ls -la "$RUNNER_TOOL_CACHE"/Java_*/
+ls -la "$RUNNER_TOOL_CACHE"/Java_*/*
 group.end
 # endregion
 # region list env
