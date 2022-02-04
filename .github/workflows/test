@@ -24,6 +24,11 @@ export GITHUB_CHECK_RUN_ID
 echo "GITHUB_CHECK_RUN_ID=$GITHUB_CHECK_RUN_ID" >>"$GITHUB_ENV"
 
 # endregion
+# region list tool chains
+group.start 'List Tool Chains'
+ls -la "$RUNNER_TOOL_CACHE"
+group.end
+# endregion
 # region list env
 group.start 'List System Environment'
 log.notice 'List of all available environment variables in this run:'
