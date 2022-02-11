@@ -1,3 +1,5 @@
+# Is it the workflow's name or the job's name that should be referred to in
+# required status checks?
 name: Workflow
 on:
   pull_request
