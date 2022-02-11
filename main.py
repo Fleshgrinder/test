@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 def main() -> None:
-    pass
+    print('TODO not implemented')
 
 
 if __name__ == '__main__':
