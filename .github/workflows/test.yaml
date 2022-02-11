@@ -1,22 +1,22 @@
 name: test
 on:
-  pull_request:
-    branches:
-    - main
+  pull_request
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
 jobs:
   test:
     runs-on: ubuntu-latest
     permissions:
+      actions: read
       checks: write
       contents: read
       deployments: write
     steps:
-    - run: |
-        echo '::notice file=main.py,line=3,endLine=3,col=9,endColumn=11,title=My Notice Title::My Notice Message'
-        echo '::group::My Group'
-        echo '::warning::My Warning Message'
-        echo '::error file=main.py,line=3,endLine=3,col=9,endColumn=11,title=My Error Title::My Error Message'
-        echo '::endgroup::'
-        wget https://github.com/cli/cli/releases/download/v2.4.0/gh_2.4.0_linux_amd64.tar.gz
-        tar -xzf gh_2.4.0_linux_amd64.tar.gz
-        ls -la
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Test
+      run: ./.github/workflows/test
+      env:
+        GITHUB_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

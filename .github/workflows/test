@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+# region utils
+log() { printf '::%s::%b\n' "$1" "$2"; }
+log.debug() { log debug "$@"; }
+log.notice() { log notice "$@"; }
+log.warning() { log warning "$@"; }
+log.error() { log error "$@"; }
+
+group.start() { printf '::group::%b\n' "$1"; }
+group.end() { printf '::endgroup::\n'; }
+# endregion
+# region setup env
+
+# Gets the unique identifier of the check suite of this GitHub Actions run.
+GITHUB_CHECK_SUITE_ID=$(gh api "repos/{owner}/{repo}/actions/runs/$GITHUB_RUN_ID" --jq '.check_suite_id')
+export GITHUB_CHECK_SUITE_ID
+echo "GITHUB_CHECK_SUITE_ID=$GITHUB_CHECK_SUITE_ID" >>"$GITHUB_ENV"
+
+# Gets the unique identifier of the check run of this GitHub Actions run.
+GITHUB_CHECK_RUN_ID=$(gh api "repos/{owner}/{repo}/check-suites/$GITHUB_CHECK_SUITE_ID/check-runs" --jq '.check_runs[] | select(.name=="'"$GITHUB_JOB"'") | .id')
+export GITHUB_CHECK_RUN_ID
+echo "GITHUB_CHECK_RUN_ID=$GITHUB_CHECK_RUN_ID" >>"$GITHUB_ENV"
+
+# endregion
+# region list tool chains
+group.start 'List Tool Chains'
+ls -la "$RUNNER_TOOL_CACHE"
+ls -la "$RUNNER_TOOL_CACHE"/Java_*/
+ls -la "$RUNNER_TOOL_CACHE"/Java_*/*
+group.end
+# endregion
+# region list env
+group.start 'List System Environment'
+log.notice 'List of all available environment variables in this run:'
+echo
+while read -r line; do
+    key=${line%%=*}
+    value=${line#*=}
+    printf '\e[35m%s\e[0m=\e[32m%s\e[0m\n' "$key" "$value"
+done < <(env | sort)
+group.end
+# endregion
+# region list event
+group.start 'List GitHub Event'
+log.notice 'Lists the entire payload of the received GitHub event that triggered the run:'
+echo
+jq --color-output . "$GITHUB_EVENT_PATH"
+group.end
+# endregion
+# region validate env
+readonly GITHUB_EVENT_PATH=${GITHUB_EVENT_PATH:?missing required <GITHUB_EVENT_PATH> env var}
+readonly GITHUB_RUN_ID=${GITHUB_RUN_ID?:missing required <GITHUB_RUN_ID> env var}
+# endregion
+# region post summary
+group.start 'Check Run'
+gh api '/repos/{owner}/{repo}/check-runs' --input - <<<'{
+    "name": "Test Results",
+    "head_sha": "'"$GITHUB_HEAD_SHA"'",
+    "status": "completed",
+    "conclusion": "neutral",
+    "output": {
+        "title": "Title",
+        "summary": "Summary **bold** __italic__",
+        "text": "Text **bold** __italic__"
+    },
+    "actions": [
+        {
+            "label": "Label",
+            "description": "Description",
+            "identifier": "id"
+        }
+    ]
+}' | jq --color-output
+group.end
+# endregion post summary

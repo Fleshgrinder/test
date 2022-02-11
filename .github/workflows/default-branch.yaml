@@ -1,0 +1,13 @@
+name: Default Branch
+on:
+  push:
+    branches:
+    - ${{ github.event.repository.default_branch }}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+    - run: echo Works
