@@ -1,0 +1,35 @@
+name: Tool Cache
+on:
+  pull_request
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
+jobs:
+  tool-cache:
+    name: Tool Cache
+    runs-on: ubuntu-latest
+    steps:
+    - name: Commands
+      run: |
+        echo '::debug::debug'
+        echo '::info::info'
+        echo '::notice::notice'
+        echo '::warning::warning'
+        echo '::error::error'
+    - name: User Env
+      run: |
+        while read -r line; do printf -- '\033[35m%s\033[0m=\033[32m%s\033[0m\n' "${line%%=*}" "${line#*=}"; done < <(env | sort)
+    - name: Root Env
+      run: |
+        while read -r line; do printf -- '\033[35m%s\033[0m=\033[32m%s\033[0m\n' "${line%%=*}" "${line#*=}"; done < <(sudo env | sort)
+    - name: Tool Cache Contents
+      run: |
+        for tool in $RUNNER_TOOL_CACHE; do
+          echo "::group::$(basename "$tool")"
+          for version in "$tool"; do
+            echo "::group::$(basename "$version")"
+            ls -hlAF --color=always --group-directories-first $version/ $version/*/ $version/*/*/
+            echo '::endgroup::'
+          done
+          echo '::endgroup::'
+        done

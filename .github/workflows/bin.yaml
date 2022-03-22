@@ -1,9 +1,0 @@
-on:
-  pull_request
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-    - run: |
-        which -a envsubst
-        ls -la /usr/share/java
