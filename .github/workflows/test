@@ -75,3 +75,11 @@ gh api '/repos/{owner}/{repo}/check-runs' --input - <<<'{
 }' | jq --color-output
 group.end
 # endregion post summary
+
+group.start 'Nesting?'
+echo 1
+group.start 'L1'
+echo 2
+group.end
+echo 3
+group.end
