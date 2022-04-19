@@ -75,6 +75,16 @@ jobs:
         printf '\033[46m cyan \033[0m\n'
         printf '\033[47m white \033[0m\n'
         printf '\n'
+        printf '> faint background:\n'
+        printf '\033[100m black \033[0m\n'
+        printf '\033[101m red \033[0m\n'
+        printf '\033[102m green \033[0m\n'
+        printf '\033[103m yellow \033[0m\n'
+        printf '\033[104m blue \033[0m\n'
+        printf '\033[105m magenta \033[0m\n'
+        printf '\033[106m cyan \033[0m\n'
+        printf '\033[107m white \033[0m\n'
+        printf '\n'
         printf '> box:\n'
         printf '\033[37;40m black \033[0m\n'
         printf '\033[30;44m blue \033[0m\n'
@@ -84,97 +94,9 @@ jobs:
         printf '\033[30;41m red  \033[0m\n'
         printf '\033[30;47m white \033[0m\n'
         printf '\033[30;43m yellow \033[0m\n'
-    - name: Formatting
-      run: |
-        export reset='\033[0m'
-        export _fg='\033[39m'
-        export _bg='\033[49m'
-
-        export bold='\033[1m'
-        export _bold='\033[22m'
-        export b=$bold
-        export _b=$_bold
-
-        export italic='\033[3m'
-        export _italic='\033[23m'
-        export i=$italic
-        export _i=$_italic
-
-        export underline='\033[4m'
-        export _underline='\033[24m'
-        export u=$underline
-        export _u=$_underline
-
-        export black='\033[30m'
-        export red='\033[31m'
-        export green='\033[32m'
-        export yellow='\033[33m'
-        export blue='\033[34m'
-        export magenta='\033[35m'
-        export cyan='\033[36m'
-        export white='\033[37m'
-
-        export _black=$_fg
-        export _red=$_fg
-        export _green=$_fg
-        export _yellow=$_fg
-        export _blue=$_fg
-        export _magenta=$_fg
-        export _cyan=$_fg
-        export _white=$_fg
-
-        export black_bg='\033[40m'
-        export red_bg='\033[41m'
-        export green_bg='\033[42m'
-        export yellow_bg='\033[43m'
-        export blue_bg='\033[44m'
-        export magenta_bg='\033[45m'
-        export cyan_bg='\033[46m'
-        export white_bg='\033[47m'
-
-        export _black_bg=$_bg
-        export _red_bg=$_bg
-        export _green_bg=$_bg
-        export _yellow_bg=$_bg
-        export _blue_bg=$_bg
-        export _magenta_bg=$_bg
-        export _cyan_bg=$_bg
-        export _white_bg=$_bg
-
-        export black_box='\033[37;40m'
-        export blue_box='\033[30;44m'
-        export cyan_box='\033[30;46m'
-        export green_box='\033[30;42m'
-        export magenta_box='\033[30;45m'
-        export red_box='\033[30;41m'
-        export white_box='\033[30;47m'
-        export yellow_box='\033[30;43m'
-
-        box() {
-            (
-                export LC_ALL=en_US.UTF-8
-                color=${1:?missing required <color> argument}
-                shift
-                columns=120
-                width=$((columns - 4))
-                printf -- "$color%${columns}s$reset\n" ' '
-                while read -r line; do
-                    text=$(sed -E 's/\\033\[[^m]+m//g' <<<"$line")
-                    printf -- "$color  %b%$((width - ${#text}))s  $reset\n" "$line" ' '
-                #done < <(fold --bytes --spaces --width=$width <<<"$*")
-                done < <(fmt --goal=100 --split-only --width=$width <<<"$*")
-                printf -- "$color%${columns}s$reset\n" ' '
-            )
-        }
-        info-box() { box "$blue_box" "💡 $*"; }
-        warning-box() { box "$yellow_box" "🔥 $*"; }
-        error-box() { box "$red_box" "😱 $*"; }
-        success-box() { box "$green_box" "😊 $*"; }
-        export -f box info-box warning-box error-box success-box
-
-        info-box "info
-        info
-        ${u}info$_u"
+        printf '\n'
+        printf '> hyperlink:\n'
+        printf '\e]8;;https://github.com/\e\\GitHub\e]8;;\e\\'
     - name: Checkout
       uses: actions/checkout@v2
     - name: Test
