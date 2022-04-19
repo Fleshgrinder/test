@@ -151,14 +151,12 @@ jobs:
         export yellow_box='\033[30;43m'
 
         box() {
-            local color columns width line text
-            color=${1:?missing required <color> argument}
-            shift
-            columns=$(tput cols || printf 120)
-            width=$((columns - 4))
-
             (
                 export LC_ALL=en_US.UTF-8
+                color=${1:?missing required <color> argument}
+                shift
+                columns=120
+                width=$((columns - 4))
                 printf -- "$color%${columns}s$reset\n"
                 while read -r line; do
                     text=$(sed -E 's/\\033\[[^m]+m//g' <<<"$line")
