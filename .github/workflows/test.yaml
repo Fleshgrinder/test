@@ -157,13 +157,13 @@ jobs:
                 shift
                 columns=120
                 width=$((columns - 4))
-                printf -- "$color%${columns}s$reset\n"
+                printf -- "$color%${columns}s$reset\n" ' '
                 while read -r line; do
                     text=$(sed -E 's/\\033\[[^m]+m//g' <<<"$line")
-                    printf -- "$color  %b%$((width - ${#text}))s  $reset\n" "$line"
+                    printf -- "$color  %b%$((width - ${#text}))s  $reset\n" "$line" ' '
                 #done < <(fold --bytes --spaces --width=$width <<<"$*")
                 done < <(fmt --goal=100 --split-only --width=$width <<<"$*")
-                printf -- "$color%${columns}s$reset\n"
+                printf -- "$color%${columns}s$reset\n" ' '
             )
         }
         info-box() { box "$blue_box" "💡 $*"; }
