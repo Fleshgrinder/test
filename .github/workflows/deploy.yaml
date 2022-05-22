@@ -1,0 +1,79 @@
+name: deploy
+on:
+  pull_request:
+  workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+jobs:
+  live:
+    environment: live
+    runs-on: ubuntu-latest
+    steps:
+    # https://github.community/t/how-to-get-the-current-job-environment-name/190251/4
+    - name: environment
+      # language=javascript
+      run: |
+        const core = require('@actions/core');
+        const jwt = require('jsonwebtoken');
+        (async function() {
+          const id_token = await core.getIDToken();
+          decoded = jwt.decode(id_token , {complete: true});
+          core.exportVariable("TIER", decoded.payload.environment);
+        })()
+      shell: node
+    - name: user env
+      run: env | sort
+    - name: root env
+      run: sudo env | sort
+    - name: github event
+      run: jq -C . "$GITHUB_EVENT_PATH"
+    # github
+    - name: github context
+      env:
+        CTX: ${{ toJson(github) }}
+      run: jq -C . <<<"${CTX:-'{}'}"
+    # env
+    - name: env context
+      env:
+        CTX: ${{ toJson(env) }}
+      run: jq -C . <<<"${CTX:-'{}'}"
+    # job
+    - name: job context
+      env:
+        CTX: ${{ toJson(job) }}
+      run: jq -C . <<<"${CTX:-'{}'}"
+    # steps
+    - name: steps context
+      env:
+        CTX: ${{ toJson(steps) }}
+      run: jq -C . <<<"${CTX:-'{}'}"
+    # runner
+    - name: runner context
+      env:
+        CTX: ${{ toJson(runner) }}
+      run: jq -C . <<<"${CTX:-'{}'}"
+    # secrets
+    - name: secrets context
+      env:
+        CTX: ${{ toJson(secrets) }}
+      run: jq -C . <<<"${CTX:-'{}'}"
+    # strategy
+    - name: strategy context
+      env:
+        CTX: ${{ toJson(strategy) }}
+      run: jq -C . <<<"${CTX:-'{}'}"
+    # matrix
+    - name: matrix context
+      env:
+        CTX: ${{ toJson(matrix) }}
+      run: jq -C . <<<"${CTX:-'{}'}"
+    # needs
+    - name: needs context
+      env:
+        CTX: ${{ toJson(needs) }}
+      run: jq -C . <<<"${CTX:-'{}'}"
+    # inputs
+    - name: inputs context
+      env:
+        CTX: ${{ toJson(inputs) }}
+      run: jq -C . <<<"${CTX:-'{}'}"
