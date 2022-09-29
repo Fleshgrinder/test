@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
+echo '::warning::multi%25line%25warning?'
+
 # region utils
 log() { printf '::%s::%b\n' "$1" "$2"; }
 log.debug() { log debug "$@"; }
