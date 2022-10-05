@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
+uuidgen
+
 echo '::warning::multi%0Aline%0Awarning?'
 
 # region utils
