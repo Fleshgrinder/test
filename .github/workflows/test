@@ -2,6 +2,7 @@
 set -Eeuo pipefail
 
 uuidgen
+cat /proc/sys/kernel/random/uuid
 
 echo '::warning::multi%0Aline%0Awarning?'
 
