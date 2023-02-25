@@ -1,0 +1,52 @@
+name: pip
+
+on:
+  push:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+  native:
+    strategy:
+      matrix:
+        os:
+        - macos-10.15
+        - macos-11
+        - macos-12
+        - ubuntu-18.04
+        - ubuntu-20.04
+        - ubuntu-22.04
+        - windows-2019
+        - windows-2022
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.7'
+    - run: pip3 debug --verbose | tee pip.log
+    - run: ./pip/sort.py
+  qemu:
+    strategy:
+      matrix:
+        platform:
+        - linux/386
+        - linux/arm/v5
+        - linux/arm/v7
+        - linux/arm64/v8
+        - linux/mips64le
+        - linux/ppc64le
+        - linux/s390x
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@v3
+    - run: >-
+        docker run
+        --entrypoint /usr/local/src/pip/entrypoint.bash
+        --platform ${{ matrix.platform }}
+        --volume "$PWD:/usr/local/src"
+        debian | tee pip.log
+    - run: ./pip/sort.py
